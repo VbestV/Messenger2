@@ -3,9 +3,18 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Messenger2/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1065" />
+        <entry key="..\:/Messenger2/app/src/main/res/layout/activity_chat_log.xml" value="0.22" />
+        <entry key="..\:/Messenger2/app/src/main/res/layout/activity_latest_messages.xml" value="0.17527173913043478" />
+        <entry key="..\:/Messenger2/app/src/main/res/layout/activity_login.xml" value="0.18" />
+        <entry key="..\:/Messenger2/app/src/main/res/layout/activity_new_message.xml" value="0.17527173913043478" />
         <entry key="..\:/Messenger2/app/src/main/res/layout/activity_register.xml" value="0.1" />
         <entry key="..\:/Messenger2/app/src/main/res/layout/activity_welcome.xml" value="0.15" />
+        <entry key="..\:/Messenger2/app/src/main/res/layout/chat_from_row.xml" value="0.33" />
+        <entry key="..\:/Messenger2/app/src/main/res/layout/chat_to_row.xml" value="0.33" />
         <entry key="..\:/Messenger2/app/src/main/res/layout/fragment_search.xml" value="0.25" />
+        <entry key="..\:/Messenger2/app/src/main/res/layout/latest_message_row.xml" value="0.33" />
+        <entry key="..\:/Messenger2/app/src/main/res/layout/user_row_new_message.xml" value="0.25" />
         <entry key="..\:/Messenger2/app/src/main/res/layout/user_search_item_layout.xml" value="0.17527173913043478" />
         <entry key="..\:/Messenger2/app/src/main/res/menu/menu_main.xml" value="0.20416666666666666" />
       </map>

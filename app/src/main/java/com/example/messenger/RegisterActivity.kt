@@ -1,88 +1,123 @@
 package com.example.messenger
 
+import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
-import androidx.appcompat.widget.Toolbar
+import com.example.messenger.messeges.LatestMessagesActivity
+import com.example.messenger.models.User
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_register.*
 import java.util.*
-import kotlin.collections.HashMap
 
+@Suppress("DEPRECATION")
 class RegisterActivity : AppCompatActivity() {
-
-    private lateinit var mAuth: FirebaseAuth
-    private lateinit var refUsers: DatabaseReference
-    private var firebaseUserID: String = ""
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
-        val toolbar: Toolbar = findViewById(R.id.toolbar_register)
-        setSupportActionBar(toolbar)
-        supportActionBar!!.title = "Register"
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        toolbar.setNavigationOnClickListener {
-            val intent = Intent(this@RegisterActivity, WelcomeActivity::class.java)
-            startActivity(intent)
-            finish()
+        register_button_register.setOnClickListener {
+        performRegister()
+
         }
 
-        mAuth = FirebaseAuth.getInstance()
+            already_have_account_text_view.setOnClickListener{
+                Log.d("MainActivity", "Try to show login activity")
 
-        register_btn.setOnClickListener {
-            registerUser()
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
+            }
+        selectphoto_button_register.setOnClickListener {
+            Log.d("MainActivity", "Try to show photo selector")
+
+            val intent = Intent(Intent.ACTION_PICK)
+            intent.type = "image/*"
+            startActivityForResult(intent, 0)
+        }
+        }
+
+    var selectedPhotoUri: Uri? = null
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == 0 && resultCode == Activity.RESULT_OK && data != null){
+
+            selectedPhotoUri = data.data
+            val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, selectedPhotoUri)
+
+            selectphoto_view_register.setImageBitmap(bitmap)
+
+            selectphoto_button_register.alpha =0f
+            //val bitmapDrawable = BitmapDrawable(bitmap)
+            //selectphoto_button_register.setBackgroundDrawable(bitmapDrawable)
         }
     }
 
-    private fun registerUser() {
-        val username: String = username_register.text.toString()
-        val email: String = email_register.text.toString()
-        val password: String = password_register.text.toString()
+    private fun performRegister() {
+        val email = email_edittext_register.text.toString()
+        val password = password_edittext_register.text.toString()
 
-        if (username == ""){
-            Toast.makeText(this@RegisterActivity, "Please write username.", Toast.LENGTH_LONG).show()
+        if (email.isEmpty() || password.isEmpty()){
+            Toast.makeText(this, "Please enter text in email/pw", Toast.LENGTH_SHORT).show()
+            return
         }
-        else if (email == ""){
-            Toast.makeText(this@RegisterActivity, "Please write Email", Toast.LENGTH_LONG).show()
-        }
-        else if (password == ""){
-            Toast.makeText(this@RegisterActivity, "Please write password", Toast.LENGTH_LONG).show()
-        }
-        else {
-            mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener{ task ->
-                    if (task.isSuccessful){
-                        firebaseUserID = mAuth.currentUser!!.uid
-                        refUsers = FirebaseDatabase.getInstance().reference.child("Users").child(firebaseUserID)
 
-                        val userHashMap = HashMap<String, Any>()
-                        userHashMap["uid"] = firebaseUserID
-                        userHashMap["username"] = username
-                        userHashMap["profile"] = "https://firebasestorage.googleapis.com/v0/b/messengerapp-743ca.appspot.com/o/profile.png?alt=media&token=3e87a682-3b7d-4469-ae49-6c639d4362de"
-                        userHashMap["cover"] = "https://firebasestorage.googleapis.com/v0/b/messengerapp-743ca.appspot.com/o/cover.jpg?alt=media&token=d70061c0-d3aa-4947-9a9f-7a3655691c4a"
-                        userHashMap["status"] = "Offline"
-                        userHashMap["search"] = username.lowercase(Locale.getDefault())
-                        userHashMap["website"] = "https://google.com"
+        Log.d("MainActivity", "Email is:"+email)
+        Log.d("MainActivity", "Password is:"+password)
 
-                        refUsers.updateChildren(userHashMap)
-                            .addOnCompleteListener { task ->
-                                if (task.isSuccessful){
-                                    val intent = Intent(this@RegisterActivity, MainActivity::class.java)
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                                    startActivity(intent)
-                                    finish()
-                                }
-                            }
-                    }
-                    else{
-                        Toast.makeText(this@RegisterActivity, "Error Message: " + task.exception!!.message.toString(), Toast.LENGTH_LONG).show()
+        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email,password)
+            .addOnCompleteListener{
+                if (!it.isSuccessful) return@addOnCompleteListener
+
+                Log.d("Main", "Successfully created user with uid: ${it.result.user?.uid}")
+                uploadImageToFirebaseStorage()
+            }
+            .addOnFailureListener {
+                Log.d("Main", "Failed to create user: ${it.message}")
+                Toast.makeText(this, "Failed to create user: ${it.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun uploadImageToFirebaseStorage() {
+        if (selectedPhotoUri == null) return
+
+        val filename = UUID.randomUUID().toString()
+        val ref = FirebaseStorage.getInstance().getReference("/images/$filename")
+
+        ref.putFile(selectedPhotoUri!!)
+            .addOnSuccessListener {
+                ref.downloadUrl.addOnSuccessListener {
+                // Log.d("RegisterActivity", "Successfully upload image: ${it.metadata.path}")
+                saveUserToFirebaseDatabase(it.toString())
+                    ref.downloadUrl.addOnSuccessListener {
+                        Log.d("RegisterActivity", "File Location: $it")
                     }
                 }
-        }
+            }
+            .addOnFailureListener {
+
+            }
+    }
+
+    private fun saveUserToFirebaseDatabase(profileImageUrl: String) {
+        val uid = FirebaseAuth.getInstance().uid ?: ""
+        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
+        val id_user = FirebaseAuth.getInstance().uid ?: ""
+        val user = User(uid, username_edittext_register.text.toString(), profileImageUrl, id_user)
+
+        ref.setValue(user)
+            .addOnSuccessListener {
+                val intent = Intent(this, LatestMessagesActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+
+            }
     }
 }
