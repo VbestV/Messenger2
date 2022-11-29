@@ -1,17 +1,92 @@
 package com.example.messenger
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
+import android.util.Log
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
+import kotlinx.android.synthetic.main.activity_register.*
+import kotlinx.android.synthetic.main.activity_settings.*
+import kotlinx.android.synthetic.*
+import java.util.*
 
+
+@Suppress("DEPRECATION")
 class SettingsActivity : AppCompatActivity() {
+
+    private lateinit var database: DatabaseReference
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        val user_uid = FirebaseAuth.getInstance().uid
-        val old_username = FirebaseDatabase.getInstance().getReference("username")
-        val old_iduser = FirebaseDatabase.getInstance().getReference("id_user")
+        supportActionBar?.title = "Settings"
+
+        select_photo_button_settings.setOnClickListener {
+            Log.d("MainActivity", "Try to show photo selector")
+
+            val intent = Intent(Intent.ACTION_PICK)
+            intent.type = "image/*"
+            startActivityForResult(intent, 0)
+        }
+
+        settings_button_edit.setOnClickListener {
+            val userName = new_username_edittext_settings.text.toString()
+            val userID = id_user_edittext_settings.text.toString()
+            uploadImageToFirebaseStorage()
+            updateData(userName,userID)
+        }
+    }
+    var selectedPhotoUri: Uri? = null
+
+    private fun uploadImageToFirebaseStorage() {
+        if (selectedPhotoUri == null) return
+
+        val filename = UUID.randomUUID().toString()
+        val ref = FirebaseStorage.getInstance().getReference("/images/$filename")
+
+        ref.putFile(selectedPhotoUri!!)
+            .addOnSuccessListener {
+                ref.downloadUrl.addOnSuccessListener {
+                    // Log.d("RegisterActivity", "Successfully upload image: ${it.metadata.path}")
+                }
+            }
+            .addOnFailureListener {
+
+            }
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == 0 && resultCode == Activity.RESULT_OK && data != null){
+
+            selectedPhotoUri = data.data
+            val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, selectedPhotoUri)
+
+            selectphoto_view_settings.setImageBitmap(bitmap)
+
+            select_photo_button_settings.alpha =0f
+        }
+    }
+
+    private fun updateData(userName: String, userID: String) {
+        database = FirebaseDatabase.getInstance().getReference("users")
+        val user = mapOf<String,String>(
+            "profileImageUrl" to selectedPhotoUri.toString(),
+            "uid" to FirebaseAuth.getInstance().uid.toString(),
+            "username" to userName,
+
+        )
+
+        database.child(FirebaseAuth.getInstance().uid.toString()).updateChildren(user).addOnCompleteListener{
+            Toast.makeText(this, "Success",Toast.LENGTH_SHORT).show()
+        }
     }
 }

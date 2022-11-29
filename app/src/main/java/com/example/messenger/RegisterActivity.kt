@@ -55,8 +55,6 @@ class RegisterActivity : AppCompatActivity() {
             selectphoto_view_register.setImageBitmap(bitmap)
 
             selectphoto_button_register.alpha =0f
-            //val bitmapDrawable = BitmapDrawable(bitmap)
-            //selectphoto_button_register.setBackgroundDrawable(bitmapDrawable)
         }
     }
 
@@ -68,10 +66,6 @@ class RegisterActivity : AppCompatActivity() {
             Toast.makeText(this, "Please enter text in email/pw", Toast.LENGTH_SHORT).show()
             return
         }
-
-        Log.d("MainActivity", "Email is:"+email)
-        Log.d("MainActivity", "Password is:"+password)
-
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email,password)
             .addOnCompleteListener{
                 if (!it.isSuccessful) return@addOnCompleteListener
@@ -109,12 +103,11 @@ class RegisterActivity : AppCompatActivity() {
     private fun saveUserToFirebaseDatabase(profileImageUrl: String) {
         val uid = FirebaseAuth.getInstance().uid ?: ""
         val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
-        val id_user = uid
-        val user = User(uid, username_edittext_register.text.toString(), profileImageUrl, id_user)
+        val user = User(uid, username_edittext_register.text.toString(), profileImageUrl)
 
         ref.setValue(user)
             .addOnSuccessListener {
-                val intent = Intent(this, LatestMessagesActivity::class.java)
+                val intent = Intent(this@RegisterActivity, LatestMessagesActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
 

@@ -6,25 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".SettingsActivity">
 
-    <TextView
-        android:id="@+id/old_username_settings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="13dp"
-        android:text="Old Username"
-        app:layout_constraintBottom_toTopOf="@+id/new_username_edittext_settings"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.133"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.995" />
-
     <EditText
         android:id="@+id/new_username_edittext_settings"
         android:layout_width="0dp"
         android:layout_height="54dp"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="52dp"
+        android:layout_marginTop="28dp"
         android:layout_marginEnd="32dp"
         android:background="@drawable/rounded_edittext_settings"
         android:ems="10"
@@ -34,25 +21,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/selectphoto_button_settings"></EditText>
-
-    <TextView
-        android:id="@+id/old_iduser_settings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Old ID user"
-        app:layout_constraintBottom_toTopOf="@+id/id_user_edittext_settings"
-        app:layout_constraintEnd_toEndOf="@+id/new_username_edittext_settings"
-        app:layout_constraintHorizontal_bias="0.039"
-        app:layout_constraintStart_toStartOf="@+id/new_username_edittext_settings"
-        app:layout_constraintTop_toBottomOf="@+id/old_username_settings"
-        app:layout_constraintVertical_bias="0.918" />
+        app:layout_constraintTop_toBottomOf="@+id/select_photo_button_settings"></EditText>
 
     <EditText
         android:id="@+id/id_user_edittext_settings"
         android:layout_width="0dp"
         android:layout_height="50dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/rounded_edittext_settings"
         android:ems="10"
         android:hint="Edit ID user"
@@ -78,13 +53,13 @@
         android:id="@+id/selectphoto_view_settings"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        app:layout_constraintBottom_toBottomOf="@+id/selectphoto_button_settings"
-        app:layout_constraintEnd_toEndOf="@+id/selectphoto_button_settings"
-        app:layout_constraintStart_toStartOf="@+id/selectphoto_button_settings"
-        app:layout_constraintTop_toTopOf="@+id/selectphoto_button_settings" />
+        app:layout_constraintBottom_toBottomOf="@+id/select_photo_button_settings"
+        app:layout_constraintEnd_toEndOf="@+id/select_photo_button_settings"
+        app:layout_constraintStart_toStartOf="@+id/select_photo_button_settings"
+        app:layout_constraintTop_toTopOf="@+id/select_photo_button_settings" />
 
     <Button
-        android:id="@+id/selectphoto_button_settings"
+        android:id="@+id/select_photo_button_settings"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_marginTop="32dp"
