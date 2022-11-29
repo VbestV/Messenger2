@@ -9,14 +9,13 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.messenger.NewMessageActivity
 import com.example.messenger.R
 import com.example.messenger.RegisterActivity
+import com.example.messenger.SettingsActivity
 import com.example.messenger.models.ChatMessage
 import com.example.messenger.models.User
 import com.example.messenger.views.LatestMessageRow
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_latest_messages.*
 import kotlinx.android.synthetic.main.latest_message_row.*
@@ -116,6 +115,10 @@ class LatestMessagesActivity : AppCompatActivity() {
         when (item?.itemId){
             R.id.menu_new_message -> {
                 val intent = Intent(this, NewMessageActivity::class.java)
+                startActivity(intent)
+            }
+            R.id.menu_settings -> {
+                val intent = Intent(this, SettingsActivity::class.java)
                 startActivity(intent)
             }
             R.id.menu_sign_out -> {
