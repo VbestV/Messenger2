@@ -38,10 +38,8 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         settings_button_edit.setOnClickListener {
-            val userName = new_username_edittext_settings.text.toString()
-            val userID = id_user_edittext_settings.text.toString()
+
             uploadImageToFirebaseStorage()
-            updateData(userName,userID)
         }
     }
     var selectedPhotoUri: Uri? = null
@@ -56,6 +54,7 @@ class SettingsActivity : AppCompatActivity() {
             .addOnSuccessListener {
                 ref.downloadUrl.addOnSuccessListener {
                     // Log.d("RegisterActivity", "Successfully upload image: ${it.metadata.path}")
+                    updateData(it.toString())
                 }
             }
             .addOnFailureListener {
@@ -76,12 +75,12 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateData(userName: String, userID: String) {
+    private fun updateData(profileImage: String) {
         database = FirebaseDatabase.getInstance().getReference("users")
         val user = mapOf<String,String>(
-            "profileImageUrl" to selectedPhotoUri.toString(),
+            "profileImageUrl" to profileImage,
             "uid" to FirebaseAuth.getInstance().uid.toString(),
-            "username" to userName,
+            "username" to new_username_edittext_settings.text.toString(),
 
         )
 

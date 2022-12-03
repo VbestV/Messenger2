@@ -23,20 +23,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/select_photo_button_settings"></EditText>
 
-    <EditText
-        android:id="@+id/id_user_edittext_settings"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/rounded_edittext_settings"
-        android:ems="10"
-        android:hint="Edit ID user"
-        android:padding="16dp"
-        app:layout_constraintEnd_toEndOf="@+id/new_username_edittext_settings"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/new_username_edittext_settings"
-        app:layout_constraintTop_toBottomOf="@+id/new_username_edittext_settings" />
-
     <Button
         android:id="@+id/settings_button_edit"
         android:layout_width="0dp"
@@ -44,10 +30,10 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/rounded_button"
         android:text="Edit"
-        app:layout_constraintEnd_toEndOf="@+id/id_user_edittext_settings"
+        app:layout_constraintEnd_toEndOf="@+id/new_username_edittext_settings"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/id_user_edittext_settings"
-        app:layout_constraintTop_toBottomOf="@+id/id_user_edittext_settings" />
+        app:layout_constraintStart_toStartOf="@+id/new_username_edittext_settings"
+        app:layout_constraintTop_toBottomOf="@+id/new_username_edittext_settings" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/selectphoto_view_settings"
