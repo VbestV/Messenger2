@@ -1,5 +1,6 @@
 package com.example.messenger.views
 
+import android.annotation.SuppressLint
 import com.example.messenger.R
 import com.example.messenger.models.ChatMessage
 import com.example.messenger.models.User
@@ -16,6 +17,7 @@ import kotlinx.android.synthetic.main.latest_message_row.view.*
 class    LatestMessageRow(val chatMessage: ChatMessage): Item<ViewHolder>(){
     var chatPartnerUser: User? = null
 
+    @SuppressLint("SetTextI18n")
     override fun bind(viewHolder: ViewHolder, position: Int) {
         if (chatMessage.fromId == FirebaseAuth.getInstance().uid) {
             viewHolder.itemView.message_textview_latest_message.text = "Me: " + chatMessage.text

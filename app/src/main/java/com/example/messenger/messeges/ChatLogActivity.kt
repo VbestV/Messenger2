@@ -1,5 +1,6 @@
 package com.example.messenger.messeges
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -52,7 +53,6 @@ class ChatLogActivity : AppCompatActivity() {
         val fromId = FirebaseAuth.getInstance().uid
         val toId = toUser?.uid
         val ref = FirebaseDatabase.getInstance().getReference("/user-messages/$fromId/$toId")
-        val timeM = FirebaseDatabase.getInstance().getReference("/user-messages/$fromId/$toId/").child("timestamp").get()
 
         ref.addChildEventListener(object: ChildEventListener{
             override fun onChildAdded(p0: DataSnapshot, previousChildName: String?) {
@@ -103,7 +103,7 @@ class ChatLogActivity : AppCompatActivity() {
         val toReference = FirebaseDatabase.getInstance().getReference("/user-messages/$toId/$fromId").push()
 
         //попыться добавить время к сообщению
-        val chatMessage = ChatMessage(reference.key!!, text, fromId!!, toId!!, System.currentTimeMillis())
+        val chatMessage = ChatMessage(reference.key!!, text, fromId, toId!!, System.currentTimeMillis())
         reference.setValue(chatMessage)
             .addOnSuccessListener {
                 Log.d(TAG, "Saved our chat message: ${reference.key}")
@@ -121,6 +121,7 @@ class ChatLogActivity : AppCompatActivity() {
 }
 
 class ChatFromItem(val text: String, val user: User, val time: Long): Item<ViewHolder>(){
+    @SuppressLint("SimpleDateFormat")
     override fun bind(viewHolder: ViewHolder, position: Int) {
         viewHolder.itemView.textview_from_row.text = text
         val transfTime = SimpleDateFormat("dd MMM, hh:mm")
@@ -137,6 +138,7 @@ class ChatFromItem(val text: String, val user: User, val time: Long): Item<ViewH
 
 }
 class ChatToItem(val text: String, val user: User?, val time: Long): Item<ViewHolder>(){
+    @SuppressLint("SimpleDateFormat")
     override fun bind(viewHolder: ViewHolder, position: Int) {
         viewHolder.itemView.textview_to_row.text = text
         val transfTime = SimpleDateFormat("dd MMM, hh:mm")
