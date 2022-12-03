@@ -19,6 +19,7 @@ import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_chat_log.*
 import kotlinx.android.synthetic.main.chat_from_row.view.*
 import kotlinx.android.synthetic.main.chat_to_row.view.*
+import java.text.SimpleDateFormat
 
 class ChatLogActivity : AppCompatActivity() {
     companion object{
@@ -51,6 +52,7 @@ class ChatLogActivity : AppCompatActivity() {
         val fromId = FirebaseAuth.getInstance().uid
         val toId = toUser?.uid
         val ref = FirebaseDatabase.getInstance().getReference("/user-messages/$fromId/$toId")
+        val timeM = FirebaseDatabase.getInstance().getReference("/user-messages/$fromId/$toId/").child("timestamp").get()
 
         ref.addChildEventListener(object: ChildEventListener{
             override fun onChildAdded(p0: DataSnapshot, previousChildName: String?) {
@@ -60,10 +62,11 @@ class ChatLogActivity : AppCompatActivity() {
 
                     if (chatMessage.fromId == FirebaseAuth.getInstance().uid){
                         val currentUser = LatestMessagesActivity.currentUser ?: return
-                        adapter.add(ChatToItem(chatMessage.text, currentUser))
+
+                        adapter.add(ChatToItem(chatMessage.text, currentUser, chatMessage.timestamp))
                     }
                     else{
-                        adapter.add(ChatFromItem(chatMessage.text, toUser!!))
+                        adapter.add(ChatFromItem(chatMessage.text, toUser!!, chatMessage.timestamp))//здесь время должен добавить
                     }
                 }
 
@@ -100,7 +103,7 @@ class ChatLogActivity : AppCompatActivity() {
         val toReference = FirebaseDatabase.getInstance().getReference("/user-messages/$toId/$fromId").push()
 
         //попыться добавить время к сообщению
-        val chatMessage = ChatMessage(reference.key!!, text, fromId!!, toId!!, System.currentTimeMillis()/1000)
+        val chatMessage = ChatMessage(reference.key!!, text, fromId!!, toId!!, System.currentTimeMillis())
         reference.setValue(chatMessage)
             .addOnSuccessListener {
                 Log.d(TAG, "Saved our chat message: ${reference.key}")
@@ -117,10 +120,12 @@ class ChatLogActivity : AppCompatActivity() {
     }
 }
 
-class ChatFromItem(val text: String, val user: User): Item<ViewHolder>(){
+class ChatFromItem(val text: String, val user: User, val time: Long): Item<ViewHolder>(){
     override fun bind(viewHolder: ViewHolder, position: Int) {
         viewHolder.itemView.textview_from_row.text = text
-
+        val transfTime = SimpleDateFormat("dd MMM, hh:mm")
+        val date_string = transfTime.format(time)
+        viewHolder.itemView.time_From.text = date_string
         val uri = user.profileImageUrl
         val targetImageView = viewHolder.itemView.imageview_chat_from_row
         Picasso.get().load(uri).into(targetImageView)
@@ -131,10 +136,12 @@ class ChatFromItem(val text: String, val user: User): Item<ViewHolder>(){
     }
 
 }
-class ChatToItem(val text: String, val user: User?): Item<ViewHolder>(){
+class ChatToItem(val text: String, val user: User?, val time: Long): Item<ViewHolder>(){
     override fun bind(viewHolder: ViewHolder, position: Int) {
         viewHolder.itemView.textview_to_row.text = text
-
+        val transfTime = SimpleDateFormat("dd MMM, hh:mm")
+        val date_string = transfTime.format(time)
+        viewHolder.itemView.timeTo.text = date_string
         val uri = user!!.profileImageUrl
         val targetImageView = viewHolder.itemView.imageview_chat_to_row
         Picasso.get().load(uri).into(targetImageView)
