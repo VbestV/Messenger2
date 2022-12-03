@@ -18,8 +18,7 @@ import com.google.firebase.database.*
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_latest_messages.*
-import kotlinx.android.synthetic.main.latest_message_row.*
-import kotlinx.android.synthetic.main.latest_message_row.view.*
+
 
 class LatestMessagesActivity : AppCompatActivity() {
 

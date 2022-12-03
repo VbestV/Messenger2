@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp">
 
-    <TextClock
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:textSize="10dp"
         app:layout_constraintVertical_bias="1.0"
-        android:text="time to send"></TextClock>
+        android:text="time to send"></TextView>
 
     <TextView
         android:id="@+id/textview_from_row"
