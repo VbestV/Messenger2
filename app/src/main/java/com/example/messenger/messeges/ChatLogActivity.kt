@@ -1,26 +1,22 @@
 package com.example.messenger.messeges
 
-import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import com.example.messenger.NewMessageActivity
 import com.example.messenger.R
+import com.example.messenger.models.ChatFromItem
 import com.example.messenger.models.ChatMessage
+import com.example.messenger.models.ChatToItem
 import com.example.messenger.models.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_chat_log.*
-import kotlinx.android.synthetic.main.chat_from_row.view.*
-import kotlinx.android.synthetic.main.chat_to_row.view.*
-import java.text.SimpleDateFormat
 
 class ChatLogActivity : AppCompatActivity() {
     companion object{
@@ -120,37 +116,3 @@ class ChatLogActivity : AppCompatActivity() {
     }
 }
 
-class ChatFromItem(val text: String, val user: User, val time: Long): Item<ViewHolder>(){
-    @SuppressLint("SimpleDateFormat")
-    override fun bind(viewHolder: ViewHolder, position: Int) {
-        viewHolder.itemView.textview_from_row.text = text
-        val transfTime = SimpleDateFormat("dd MMM, hh:mm")
-        val date_string = transfTime.format(time)
-        viewHolder.itemView.time_From.text = date_string
-        val uri = user.profileImageUrl
-        val targetImageView = viewHolder.itemView.imageview_chat_from_row
-        Picasso.get().load(uri).into(targetImageView)
-    }
-
-    override fun getLayout(): Int {
-        return R.layout.chat_from_row
-    }
-
-}
-class ChatToItem(val text: String, val user: User?, val time: Long): Item<ViewHolder>(){
-    @SuppressLint("SimpleDateFormat")
-    override fun bind(viewHolder: ViewHolder, position: Int) {
-        viewHolder.itemView.textview_to_row.text = text
-        val transfTime = SimpleDateFormat("dd MMM, hh:mm")
-        val date_string = transfTime.format(time)
-        viewHolder.itemView.timeTo.text = date_string
-        val uri = user!!.profileImageUrl
-        val targetImageView = viewHolder.itemView.imageview_chat_to_row
-        Picasso.get().load(uri).into(targetImageView)
-    }
-
-    override fun getLayout(): Int {
-        return R.layout.chat_to_row
-    }
-
-}

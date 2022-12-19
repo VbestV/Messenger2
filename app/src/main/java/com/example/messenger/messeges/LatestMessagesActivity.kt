@@ -1,6 +1,7 @@
 package com.example.messenger.messeges
 
 import android.content.Intent
+import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -32,6 +33,10 @@ class LatestMessagesActivity : AppCompatActivity() {
         recyclerview_latest_message.adapter = adapter
         recyclerview_latest_message.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 
+        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
+            val intent = Intent(this, LandChatLogActivity::class.java)
+            startActivity(intent)
+        }
         adapter.setOnItemClickListener{item, view ->
             val intent = Intent(this, ChatLogActivity::class.java)
 
