@@ -46,21 +46,27 @@ class LandChatLogActivity : AppCompatActivity() {
 
 
         landscape_latest_message.adapter = adapter
+        land_recyclerview_chat_log.adapter = adapter1
         landscape_latest_message.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 
         listenForLatestMessages()
-        listenForLatestMessages1()
 
         fetchCurrentUser()
 
         verifyUserIsLoggenIn()
 
         adapter.setOnItemClickListener{item, view->
-            val row = item as LandChatLogActivity
-            toUser = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
+            val intent1 = Intent(this,LandChatLogActivity::class.java)
+            val row = item as LatestMessageRow
+            intent1.putExtra(NewMessageActivity.USER_KEY, row.chatPartnerUser)
+            toUser = intent1.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
             supportActionBar?.title = toUser?.username
-            //запуск отображения сообщений
+            listenForMessages()
+            //land_send_button_chat_log.setOnClickListener {
+            //    performSendMessage()
+            //}
         }
+
     }
 
     private fun listenForLatestMessages() {
@@ -108,7 +114,7 @@ class LandChatLogActivity : AppCompatActivity() {
             }
         })
     }
-    private fun listenForLatestMessages1(){
+    private fun listenForMessages(){
         val fromId = FirebaseAuth.getInstance().uid
         val toId = toUser?.uid
         val ref = FirebaseDatabase.getInstance().getReference("/user-messages/$fromId/$toId")
@@ -146,29 +152,29 @@ class LandChatLogActivity : AppCompatActivity() {
             }
         })
     }
-    private fun performSendMessage(){
-        val text = land_edittext_chat_log.text.toString()
-        val fromId = FirebaseAuth.getInstance().uid
-        val user = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
-        val toId = user?.uid
-        if (fromId == null) return
-        val reference = FirebaseDatabase.getInstance().getReference("/user-messages/$fromId/$toId").push()
-        val toReference = FirebaseDatabase.getInstance().getReference("/user-messages/$toId/$fromId").push()
+    //private fun performSendMessage(){
+    //    val text = land_edittext_chat_log.text.toString()
+    //    val fromId = FirebaseAuth.getInstance().uid
+    //    val user = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
+    //    val toId = user?.uid
+    //    if (fromId == null) return
+    //    val reference = FirebaseDatabase.getInstance().getReference("/user-messages/$fromId/$toId").push()
+    //    val toReference = FirebaseDatabase.getInstance().getReference("/user-messages/$toId/$fromId").push()
 
-        val chatMessage = ChatMessage(reference.key!!, text, fromId, toId!!, System.currentTimeMillis())
+    //    val chatMessage = ChatMessage(reference.key!!, text, fromId, toId!!, System.currentTimeMillis())
 
-        reference.setValue(chatMessage)
-            .addOnSuccessListener {
-                land_edittext_chat_log.text.clear()
-                land_recyclerview_chat_log.scrollToPosition(adapter1.itemCount -1)
-            }
-        toReference.setValue(chatMessage)
-        val latestMessageRef = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId/$toId")
-        latestMessageRef.setValue(chatMessage)
+    //    reference.setValue(chatMessage)
+    //        .addOnSuccessListener {
+    //            land_edittext_chat_log.text.clear()
+    //            land_recyclerview_chat_log.scrollToPosition(adapter1.itemCount -1)
+    //        }
+    //    toReference.setValue(chatMessage)
+    //    val latestMessageRef = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId/$toId")
+    //    latestMessageRef.setValue(chatMessage)
 
-        val latestMessageToRef = FirebaseDatabase.getInstance().getReference("/latest-messages/$toId/$fromId")
-        latestMessageToRef.setValue(chatMessage)
-    }
+    //    val latestMessageToRef = FirebaseDatabase.getInstance().getReference("/latest-messages/$toId/$fromId")
+    //    latestMessageToRef.setValue(chatMessage)
+    //}
     val latestMessageMap = HashMap<String, ChatMessage>()
     private fun refreshRecyclerViewMessages(){
         adapter.clear()
@@ -210,3 +216,5 @@ class LandChatLogActivity : AppCompatActivity() {
     }
 
 }
+
+
